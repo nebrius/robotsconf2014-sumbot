@@ -6,11 +6,13 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "bin": "./index.js",
   "author": "Bryan Hughes <bryan@theoreticalideations.com>",
   "license": "MIT",
   "dependencies": {
-    "body-parser": "^1.9.3",
-    "express": "^4.10.4",
-    "johnny-five": "^0.8.32"
+    "body-parser": "^1.14.2",
+    "express": "^4.13.4",
+    "johnny-five": "^0.9.19",
+    "raspi-io": "^5.2.0"
   }
 }

@@ -4,8 +4,8 @@
   "description": "Joystick Control",
   "main": "index.js",
   "dependencies": {
-    "johnny-five": "^0.8.29",
-    "request": "^2.49.0"
+    "johnny-five": "^0.9.19",
+    "request": "^2.69.0"
   },
   "devDependencies": {},
   "scripts": {

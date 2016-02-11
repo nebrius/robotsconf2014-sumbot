@@ -22,46 +22,77 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-var request = require('request');
-var five = require('johnny-five');
-var board = new five.Board();
+'use strict';
 
-var RIGHT = 8;
-var UP = 9;
-var DOWN = 10;
-var LEFT = 11;
-var ACTION = 12;
+const request = require('request');
+const five = require('johnny-five');
+const board = new five.Board({
+  repl: false
+});
 
-var URL = 'http://192.168.1.109:8000/update';
+const RIGHT = 4; // brown
+const UP = 5;    // white
+const DOWN = 6;  // blue
+const LEFT = 7;  // green
+const ACTION = 12;
 
-board.on('ready', function() {
+const URL = 'http://192.168.1.4:8000/update';
+
+board.on('ready', () => {
+  const states = {};
 
   function update() {
+    let x, y;
+    if (states[UP]) {
+      if (states[LEFT]) {
+        x = -0.707;
+        y = 0.707;
+      } else if (states[RIGHT]) {
+        x = 0.707;
+        y = 0.707;
+      } else {
+        x = 0;
+        y = 1;
+      }
+    } else if (states[DOWN]) {
+      if (states[LEFT]) {
+        x = -0.707;
+        y = -0.707;
+      } else if (states[RIGHT]) {
+        x = 0.707;
+        y = -0.707;
+      } else {
+        x = 0;
+        y = -1;
+      }
+    } else if (states[LEFT]) {
+      x = -1;
+      y = 0;
+    } else if (states[RIGHT]) {
+      x = 1;
+      y = 0;
+    } else {
+      x = 0;
+      y = 0;
+    }
+    console.log(`Sending joystick position (${x},${y})`);
     request({
       method: 'post',
       json: true,
       url: URL,
-      body: {
-        up: states[UP],
-        down: states[DOWN],
-        left: states[LEFT],
-        right: states[RIGHT],
-        action: states[ACTION]
-      }
+      body: { x, y }
     });
   }
 
-  var states = {};
-  [RIGHT, UP, DOWN, LEFT, ACTION].forEach(function(pin) {
+  [RIGHT, UP, DOWN, LEFT, ACTION].forEach((pin) => {
     states[pin] = false;
-    var button = new five.Button(pin);
-    button.on('press', function() {
+    const button = new five.Button(pin);
+    setInterval(update, 100);
+    button.on('press', () => {
       states[pin] = true;
-      update();
     });
-    button.on('release', function() {
+    button.on('release', () => {
       states[pin] = false;
-      update();
     });
   });
 });
